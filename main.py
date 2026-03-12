@@ -15,8 +15,8 @@ log = logging.getLogger(__name__)
 BOT_TOKEN = os.environ.get("BOT_TOKEN", "")
 # Multiple chat IDs supported — comma separated e.g. "111111,222222,-100333333"
 CHAT_IDS  = [cid.strip() for cid in os.environ.get("CHAT_ID", "").split(",") if cid.strip()]
-INTERVAL  = int(os.environ.get("SCAN_INTERVAL", "120"))  # seconds, default 2 min
-COOLDOWN  = int(os.environ.get("ALERT_COOLDOWN", "1800")) # 30 min default
+INTERVAL  = int(os.environ.get("SCAN_INTERVAL", "120").split()[0])  # seconds
+COOLDOWN  = int(os.environ.get("ALERT_COOLDOWN", "1800").split()[0])  # seconds
 
 BINANCE   = "https://api.binance.com/api/v3"
 BATCH     = 10
@@ -95,24 +95,28 @@ def analyze(symbol, interval="1m"):
         if not sma50 or not sma200 or not sma50high:
             return None
 
-        # Only check latest candle (ago=1) — no history alerts
+        # Check last 2 candles — covers timing gap between scans
         idx = n - 2  # second last (just closed candle)
         if idx < 200:
             return None
 
-        s50_curr  = calc_sma(hlc4[:idx+1], 50)
-        s200_curr = calc_sma(hlc4[:idx+1], 200)
-        s50_prev  = calc_sma(hlc4[:idx], 50)
-        s200_prev = calc_sma(hlc4[:idx], 200)
-
-        if not s50_curr or not s200_curr or not s50_prev or not s200_prev:
-            return None
-
+        # Check ago=1 and ago=2 to avoid missing signals between scan cycles
         signal = None
-        if s50_prev <= s200_prev and s50_curr > s200_curr:
-            signal = "BULLISH"
-        elif s50_prev >= s200_prev and s50_curr < s200_curr:
-            signal = "BEARISH"
+        ago_found = 0
+        for back in [1, 2]:
+            check_idx = n - 1 - back
+            if check_idx < 200:
+                break
+            s50_curr  = calc_sma(hlc4[:check_idx+1], 50)
+            s200_curr = calc_sma(hlc4[:check_idx+1], 200)
+            s50_prev  = calc_sma(hlc4[:check_idx], 50)
+            s200_prev = calc_sma(hlc4[:check_idx], 200)
+            if not s50_curr or not s200_curr or not s50_prev or not s200_prev:
+                continue
+            if s50_prev <= s200_prev and s50_curr > s200_curr:
+                signal = "BULLISH"; ago_found = back; break
+            elif s50_prev >= s200_prev and s50_curr < s200_curr:
+                signal = "BEARISH"; ago_found = back; break
 
         if not signal:
             return None
@@ -128,6 +132,7 @@ def analyze(symbol, interval="1m"):
             "sma200": sma200,
             "sma50high": sma50high,
             "signal": signal,
+            "ago": ago_found,
             "is_pullback": is_pullback,
             "dist": dist,
             "interval": interval,
