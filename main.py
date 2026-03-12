@@ -144,7 +144,7 @@ def analyze(symbol, interval="1m"):
 # ── One scan cycle ───────────────────────────────────────
 def scan_once():
     log.info("Starting scan...")
-    pairs = get_top_pairs(500)
+    pairs = get_top_pairs(100)
     if not pairs:
         log.warning("No pairs fetched, skipping.")
         return
