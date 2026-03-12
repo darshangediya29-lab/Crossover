@@ -146,7 +146,7 @@ def analyze(symbol, interval="1m"):
 # ── One scan cycle ───────────────────────────────────────
 def scan_once():
     log.info("Starting scan...")
-    pairs = get_top_pairs(25)
+    pairs = get_top_pairs(50)
     if not pairs:
         log.warning("No pairs fetched, skipping.")
         return
@@ -212,7 +212,7 @@ def main():
     log.info(f"🚀 Crypto Screener started | Interval: {INTERVAL}s | Cooldown: {COOLDOWN}s | Recipients: {len(CHAT_IDS)}")
     send_telegram(
         "Crypto Screener Started!\n"
-        "Scanning top 25 pairs | 1m + 15m\n"
+        "Scanning top 50 pairs | 1m + 15m\n"
         "Interval: every " + str(INTERVAL) + " sec\n"
         "Cooldown: " + str(COOLDOWN//60) + " min per coin"
     )
