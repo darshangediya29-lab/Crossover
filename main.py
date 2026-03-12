@@ -97,15 +97,15 @@ def analyze(symbol, interval="1m"):
         if not sma50 or not sma200 or not sma50high:
             return None
 
-        # Check last 2 candles — covers timing gap between scans
-        idx = n - 2  # second last (just closed candle)
+        # Check last 5 candles — covers timing gap between scans
+        idx = n - 2
         if idx < 200:
             return None
 
-        # Check ago=1 and ago=2 to avoid missing signals between scan cycles
+        # Check ago=1 to 5 to avoid missing signals between scan cycles
         signal = None
         ago_found = 0
-        for back in [1, 2]:
+        for back in [1, 2, 3, 4, 5]:
             check_idx = n - 1 - back
             if check_idx < 200:
                 break
