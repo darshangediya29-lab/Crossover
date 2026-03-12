@@ -209,10 +209,10 @@ def main():
 
     log.info(f"🚀 Crypto Screener started | Interval: {INTERVAL}s | Cooldown: {COOLDOWN}s | Recipients: {len(CHAT_IDS)}")
     send_telegram(
-        f"🚀 <b>Crypto Screener Started!</b>\n"
-        f"Scanning top 500 pairs on 1m\n"
-        f"Interval: every {INTERVAL//60} min\n"
-        f"Cooldown: {COOLDOWN//60} min per coin"
+        "Crypto Screener Started!\n"
+        "Scanning top 25 pairs | 1m + 15m\n"
+        "Interval: every " + str(INTERVAL) + " sec\n"
+        "Cooldown: " + str(COOLDOWN//60) + " min per coin"
     )
 
     while True:
