@@ -16,7 +16,7 @@ BOT_TOKEN = os.environ.get("BOT_TOKEN", "")
 # Multiple chat IDs supported — comma separated e.g. "111111,222222,-100333333"
 CHAT_IDS  = [cid.strip() for cid in os.environ.get("CHAT_ID", "").split(",") if cid.strip()]
 INTERVAL  = int(os.environ.get("SCAN_INTERVAL", "120").split()[0])  # seconds
-COOLDOWN  = int(os.environ.get("ALERT_COOLDOWN", "1800").split()[0])  # seconds
+COOLDOWN  = int(os.environ.get("ALERT_COOLDOWN", "300").split()[0])  # seconds
 
 BINANCE   = "https://api.binance.com/api/v3"
 BATCH     = 10
