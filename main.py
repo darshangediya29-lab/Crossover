@@ -59,10 +59,12 @@ def get_top_pairs(limit=500):
     try:
         r = requests.get(f"{BINANCE}/ticker/24hr", timeout=15)
         data = r.json()
+        STABLECOINS = ["USDC","BUSD","DAI","TUSD","USDP","USDD","FDUSD","PYUSD","AEUR","EURI","BRL","EUR","GBP","TRY","BRL","PAXG","XAUT"]
         filtered = [
             t for t in data
             if t["symbol"].endswith("USDT")
             and not any(x in t["symbol"].replace("USDT","") for x in ["UP","DOWN","BULL","BEAR","3L","3S","5L","5S"])
+            and t["symbol"].replace("USDT","") not in STABLECOINS
         ]
         filtered.sort(key=lambda x: float(x["quoteVolume"]), reverse=True)
         return [t["symbol"] for t in filtered[:limit]]
