@@ -144,7 +144,7 @@ def analyze(symbol, interval="1m"):
 # ── One scan cycle ───────────────────────────────────────
 def scan_once():
     log.info("Starting scan...")
-    pairs = get_top_pairs(100)
+    pairs = get_top_pairs(25)
     if not pairs:
         log.warning("No pairs fetched, skipping.")
         return
@@ -196,6 +196,9 @@ def scan_once():
 
             time.sleep(0.05)  # Binance rate limit between batches
 
+    t = datetime.utcnow().strftime("%H:%M:%S")
+    summary = "Scan Done | Pairs: " + str(len(pairs)) + " | Cross: " + str(crossovers) + " | Alerts: " + str(alerts_sent) + " | Time: " + t + " UTC"
+    send_telegram(summary)
     log.info(f"Scan done — {len(pairs)} pairs, {crossovers} crossovers, {alerts_sent} alerts sent")
 
 # ── Main loop ────────────────────────────────────────────
